@@ -1,7 +1,14 @@
 import requests
 import time
 from datetime import datetime, timezone, timedelta
-from .config import BASE_URL, auth,POLL_INTERVAL_SECONDS
+from .config import BASE_URL, auth, POLL_INTERVAL_SECONDS
+import os
+
+
+# Example file paths for uploads
+# jmx_file_path = "c:/Users/atulb/Desktop/repo/personal_Perfrepo/qa-performance-repo/ExampleTest.jmx"  # Created JMX file
+# csv_file_path = "path/to/your/TestData.csv"  # Update with your actual .csv file path
+# csv_file_path = "path/to/your/TestData.csv"  # Update with your actual .csv file path
 
 
 def find_test_by_name(test_name):
@@ -21,8 +28,59 @@ def find_test_by_name(test_name):
         return results[0].get("id")
     return None
 
+    # ---------------------------------Update configuration-----------------------------------
 
-# ---------------------------------Update configuration-----------------------------------
+
+def upload_files_to_blazemeter_test(
+    test_id, jmx_file_name, csv_file_name, wait_time=60
+):
+    """
+    Uploads a JMeter .jmx file and/or a .csv test data file from the Script/TestData folder to an existing BlazeMeter test ID.
+    If any file name is not provided, it will be ignored.
+    After successful upload, waits for specified time (default 120 seconds) before returning.
+    """
+    upload_url = f"https://a.blazemeter.com/api/v4/tests/{test_id}/files"
+    # headers = {"Authorization": f"Bearer {api_key}"} # If you use Bearer token
+    script_folder = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "..", "Script"
+    )
+    test_Data = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "..", "TestData"
+    )
+
+    if jmx_file_name:
+        jmx_path = os.path.join(script_folder, jmx_file_name)
+        if os.path.exists(jmx_path):
+            with open(jmx_path, "rb") as jmx_file:
+                files = {"file": (jmx_file_name, jmx_file, "application/octet-stream")}
+                response_jmx = requests.post(upload_url, auth=auth, files=files)
+                response_jmx.raise_for_status()
+                print(f"JMX file upload successful for test ID: {test_id}")
+        else:
+            print(f"JMX file not found: {jmx_path}")
+    if csv_file_name:
+        csv_path = os.path.join(test_Data, csv_file_name)
+        if os.path.exists(csv_path):
+            with open(csv_path, "rb") as csv_file:
+                files = {"file": (csv_file_name, csv_file, "text/csv")}
+                response_csv = requests.post(upload_url, auth=auth, files=files)
+                response_csv.raise_for_status()
+                print(f"CSV file upload successful for test ID: {test_id}")
+        else:
+            print(f"CSV file not found: {csv_path}")
+
+    # Wait for specified time after successful upload
+    if wait_time > 0:
+        print(f"Waiting for {wait_time} seconds to ensure files are processed...")
+        time.sleep(wait_time)
+        print("Wait complete, proceeding with test execution.")
+
+    return True
+
+
+# Example usage:
+# upload_jmx_to_blazemeter('YOUR_BLAZEMETER_API_KEY', 'UserCase_2Perf.jmx', 'UserCase_2Perf Upload')
+# -------------------------------------------------------------
 
 
 def update_Blazameter_Configur(test_id, user_load, duration, rampup, region):
@@ -41,6 +99,7 @@ def update_Blazameter_Configur(test_id, user_load, duration, rampup, region):
                 "holdFor": f"{duration}m",
                 "rampUp": f"{rampup}m",
                 "locations": {region: 1},
+                "locationsPercents": {region: 100},
             }
         ]
     }
@@ -78,7 +137,9 @@ def start_test(test_id, user_load, duration, rampup, region):
                     "concurrency": user_load,
                     "holdFor": f"{duration}m",
                     "rampUp": f"{rampup}m",
-                    "locations": {region: 2}  # Assuming region is a valid location key,
+                    "locations": {
+                        region: 2
+                    },  # Assuming region is a valid location key,
                 }
             ]
         }
@@ -160,13 +221,6 @@ def fetch_request_Statistics(master_id):
     return resp_request_Statistics.json()
 
 
-def ts_to_ist_formatted(ts_seconds, fmt="%d-%b-%Y %I:%M:%S %p"):
-    """Convert Unix timestamp in seconds to IST formatted string."""
-    if ts_seconds is None:
-        return None
-    ist = timezone(timedelta(hours=5, minutes=30))
-    dt = datetime.fromtimestamp(int(ts_seconds), ist)
-    return dt.strftime(fmt)
 # error handling for file operations
 def fetch_error_statistics(master_id):
     """
@@ -179,15 +233,16 @@ def fetch_error_statistics(master_id):
         return []
     error_Results = resp.json().get("result", [])
     errors = []
-
+    print("error_Results:", error_Results)
     for item in error_Results:
         for err in item.get("errors", []):
             errors.append(
                 {
+                    "label": item.get("name"),
                     "status_code": err.get("rc"),
                     "error_message": err.get("m"),
                     "count": err.get("count"),
                 }
             )
-
+    print("errors:", errors)
     return errors

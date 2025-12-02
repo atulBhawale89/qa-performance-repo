@@ -1,5 +1,7 @@
-labelName,start_date,end_date,concurrency,samples,avgResponseTime,avgThroughput,90line,95line,99line,errorsCount,errorsRate,errors
-HTTP Request,19-Aug-2025 09:44:27 AM,19-Aug-2025 09:46:27 AM,1,29994,3.8257318130292726,249.95,5,6,10,29994,100,"{""status_code"": ""404"", ""error_message"": ""Not Found"", ""count"": 29994}"
-ALL,19-Aug-2025 09:44:27 AM,19-Aug-2025 09:46:27 AM,1,29994,3.8257318130292726,249.95,5,6,10,29994,100,"{""status_code"": ""404"", ""error_message"": ""Not Found"", ""count"": 29994}"
-ALL,19-Aug-2025 09:49:33 AM,19-Aug-2025 09:51:18 AM,10,209010,10.502435290177504,1990.5714285714287,7,11,24,209010,100,"{""status_code"": ""Non HTTP response code: org.apache.http.ConnectionClosedException"", ""error_message"": ""Non HTTP response message: Premature end of Content-Length delimited message body (expected: 1,256; received: 0)"", ""count"": 1}"
-HTTP Request,19-Aug-2025 09:49:33 AM,19-Aug-2025 09:51:18 AM,10,209010,10.502435290177504,1990.5714285714287,7,11,24,209010,100,"{""status_code"": ""Non HTTP response code: org.apache.http.ConnectionClosedException"", ""error_message"": ""Non HTTP response message: Premature end of Content-Length delimited message body (expected: 1,256; received: 0)"", ""count"": 1}"
+labelName,start_date,end_date,concurrency,samples,avgResponseTime,avgThroughput,90line,95line,99line,errorsCount,errorsRate,errors,avg_total_time,avgApigeeTime,avgBackendTime
+Get Loyelty Single,14-Nov-2025 04:13:43 PM,14-Nov-2025 04:15:06 PM,2,122,116.23770491803279,1.4698795180722892,127,271,782,0,0,,74.65356622998544,37.892285298398825,36.78093158660844
+Get Loyelty Single,14-Nov-2025 04:20:50 PM,14-Nov-2025 04:22:50 PM,3,2245,97.84587973273942,18.708333333333332,97,119,381,0,0,,72.88690476190476,39.2859977324263,33.62244897959184
+Get Loyelty Single,14-Nov-2025 04:34:25 PM,14-Nov-2025 04:36:23 PM,2,1917,107.02816901408451,16.24576271186441,106,232,646,0,0,,77.69065077910174,41.51512373968837,36.18835930339138
+Get Loyelty Single,14-Nov-2025 04:58:42 PM,14-Nov-2025 05:00:27 PM,2,714,97.69467787114846,6.8,101,128,460,0,0,,71.50221347761928,35.09591736350221,36.4254795868175
+Get Loyelty Single,14-Nov-2025 05:05:33 PM,14-Nov-2025 05:07:33 PM,3,3780,94.08703703703704,31.5,97,119,429,0,0,,70.73582915897705,36.80727656208806,33.9459530714474
+Get Loyelty Single,14-Nov-2025 06:01:45 PM,14-Nov-2025 06:03:45 PM,2,2156,110.87012987012987,17.966666666666665,107,266,576,0,0,,83.55805243445691,47.28792134831461,36.29026217228463
